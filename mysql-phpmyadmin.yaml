@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:latest
+    container_name: mysql
+    environment:
+      #- MYSQL_HOST="root"
+      MYSQL_ROOT_PASSWORD: abc.123
+    networks:
+      - my-bridge-network
+    volumes:
+      - type: bind
+        source: C:\dockerdata
+        target: /root
+    restart: always
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    environment:
+      #PMA_HOST: 172.18.0.3
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    ports:
+      - 8080:80
+    networks:
+      - my-bridge-network
+    depends_on:
+      - db
+    links:
+      - db
+    volumes:
+      - type: bind
+        source: C:\dockerdata
+        target: /root
+networks:
+  my-bridge-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.18.0.0/24
+
